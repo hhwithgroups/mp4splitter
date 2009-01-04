@@ -6,7 +6,7 @@ package mp4.util.atom;
 public abstract class AtomVisitor {
   public abstract void visit(FtypAtom atom) throws AtomException;
   public abstract void visit(MoovAtom atom) throws AtomException;
-  public abstract void visit(CO64Atom atom) throws AtomException;
+  public abstract void visit(Co64Atom atom) throws AtomException;
   public abstract void visit(CttsAtom atom) throws AtomException;
   public abstract void visit(EdtsAtom atom) throws AtomException;
   public abstract void visit(ElstAtom atom) throws AtomException;

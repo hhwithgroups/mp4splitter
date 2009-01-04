@@ -13,7 +13,7 @@ public class DefaultAtomVisitor extends AtomVisitor {
     defaultAction(atom);
   }
   @Override
-  public void visit(CO64Atom atom) throws AtomException {
+  public void visit(Co64Atom atom) throws AtomException {
     defaultAction(atom);
   }
   @Override
