@@ -15,7 +15,7 @@ public class MdatAtom extends LeafAtom {
   // the input stream contains the data.  we use the stream instead of a data file
   // because the amount of data is so large.
   private DataInputStream in;
- 
+   
   /**
    * Construct an empty mdat atom
    */
@@ -49,6 +49,8 @@ public class MdatAtom extends LeafAtom {
   public MdatAtom cut(long skip) {
     try {
       in.skipBytes((int)skip);
+      long newSize = dataSize() - skip;
+      setSize(ATOM_HEADER_SIZE + newSize);
     } catch (IOException e) {
       throw new AtomError("Unable to cut the mdat atom");
     }
@@ -62,7 +64,15 @@ public class MdatAtom extends LeafAtom {
    */
   @Override
   public void writeData(DataOutput out) throws IOException {
-    
+    writeHeader(out);
+    long numBytesToRead = dataSize();
+    // read data in using 10 MB chunks
+    byte[] input = new byte[10*1024*1024];
+    while (numBytesToRead > 0) {
+      int read = in.read(input);
+      out.write(input, 0, read);
+      numBytesToRead -= read;
+    }
   }
 
   @Override

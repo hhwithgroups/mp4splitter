@@ -112,8 +112,7 @@ public class StblAtom extends ContainerAtom {
     if (ctts != null) {
       newSize += ctts.size();
     }
-    setSize(newSize);
-        
+    setSize(ATOM_HEADER_SIZE + newSize);
   }
   
   /**

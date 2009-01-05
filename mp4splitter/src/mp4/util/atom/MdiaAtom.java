@@ -86,7 +86,7 @@ public class MdiaAtom extends ContainerAtom {
    */
   @Override
   protected void recomputeSize() {
-    setSize(mdhd.size() + hdlr.size() + minf.size());
+    setSize(ATOM_HEADER_SIZE + mdhd.size() + hdlr.size() + minf.size());
   }
 
   /**

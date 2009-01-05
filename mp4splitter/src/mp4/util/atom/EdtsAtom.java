@@ -31,6 +31,10 @@ public class EdtsAtom extends ContainerAtom {
     }
   }
   
+  /**
+   * Return the edit list atom.  Null if there isn't an edit list
+   * @return  the edit list atom.
+   */
   public ElstAtom getElst() { 
     return elst; 
   }
@@ -56,7 +60,7 @@ public class EdtsAtom extends ContainerAtom {
    */
   @Override
   protected void recomputeSize() {
-    setSize(elst.size());    
+    setSize(ATOM_HEADER_SIZE + elst.size());    
   }
 
   /**
@@ -67,7 +71,7 @@ public class EdtsAtom extends ContainerAtom {
   public EdtsAtom cut() {
     return new EdtsAtom(this);
   }
-
+  
   @Override
   public void accept(AtomVisitor v) throws AtomException {
     v.visit(this);
@@ -81,6 +85,8 @@ public class EdtsAtom extends ContainerAtom {
   @Override
   public void writeData(DataOutput out) throws IOException {
     writeHeader(out);
-    elst.writeData(out);
+    if (elst != null) {
+      elst.writeData(out);
+    }
   }
 }
