@@ -161,6 +161,21 @@ public class ByteStream {
   }
   
   /**
+   * Get a fixed point value from two 16 bit values located in a
+   * 32-bit word.
+   * @param off the offset in the byte array where value is located
+   * @return the fixed point value of the 32-bit data.
+   */
+  public final double getFixedPoint(int off) {
+    int integerPart = ((data[off] & 0xff) << 8) |
+      ((data[off+1] & 0xff));
+    int fractionPart = ((data[off+2] & 0xff) << 8) |
+      ((data[off+3] & 0xff));
+    double val = Double.valueOf(integerPart + "." + fractionPart).doubleValue();
+    return val;
+  }
+  
+  /**
    * Add an unsigned integer (4 bytes) to the byte stream.
    * @param data the data
    */

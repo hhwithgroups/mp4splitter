@@ -114,9 +114,14 @@ public class Mp4Dump extends DefaultAtomVisitor {
   @Override
   public void visit(ElstAtom atom) throws AtomException {
     printLeafHeader(atom);
-    out.print(" entries " + atom.getEntries());
-    out.println(" duration " + atom.getDuration() +
-        " time " + atom.getTime() + " rate " + atom.getRate());
+    out.println(" entries " + atom.getNumEntries());
+    level = level + 1;
+    for (int i = 0; i < atom.getNumEntries() && i < maxEntries; i++) {
+      indent();
+      out.println("duration " + atom.getDuration(i) +
+          " time " + atom.getMediaTime(i) + " rate " + atom.getMediaRate(i));
+    }
+    level = level - 1;
   }
 
   @Override
@@ -207,7 +212,7 @@ public class Mp4Dump extends DefaultAtomVisitor {
       level = level + 1;
       for (int i = 0; i < atom.getNumEntries() && i < maxEntries; i++) {
         indent();
-        out.println((i + 1) + " "  + atom.getSampleSize(i+1));
+        out.println((i + 1) + " "  + atom.getTableSampleSize(i+1));
       }
       level = level - 1;
     }

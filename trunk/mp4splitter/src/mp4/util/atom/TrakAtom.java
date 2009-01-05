@@ -96,7 +96,7 @@ public class TrakAtom extends ContainerAtom {
     if (udta != null) {
       newSize += udta.size();
     }
-    setSize(newSize);
+    setSize(ATOM_HEADER_SIZE + newSize);
   }
 
   /**
@@ -139,6 +139,18 @@ public class TrakAtom extends ContainerAtom {
     }
     if (udta != null) {
       udta.writeData(out);
+    }
+  }
+  
+  /**
+   * Change the duration of the track.  This requires changing the duration in the track
+   * header and the edit list.
+   * @param duration the new track duration.
+   */
+  public void fixupDuration(long duration) {
+    tkhd.setDuration(duration);
+    if (edts != null) {
+      edts.getElst().setDuration(duration);
     }
   }
 

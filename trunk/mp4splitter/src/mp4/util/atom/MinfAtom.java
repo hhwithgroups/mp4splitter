@@ -95,7 +95,7 @@ public class MinfAtom extends ContainerAtom {
     if (smhd != null) {
       newSize += smhd.size();
     }
-    setSize(newSize);
+    setSize(ATOM_HEADER_SIZE + newSize);
     
   }
 

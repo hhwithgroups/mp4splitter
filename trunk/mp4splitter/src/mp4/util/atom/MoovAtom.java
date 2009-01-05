@@ -124,7 +124,7 @@ public class MoovAtom extends ContainerAtom {
     if (udta != null) {
       newSize += udta.size();
     }
-    setSize(newSize);
+    setSize(ATOM_HEADER_SIZE + newSize);
   }
 
   /**
@@ -155,7 +155,7 @@ public class MoovAtom extends ContainerAtom {
       // need to convert the track timescale to the movie timescale
       long timeScaleRatio = timeScale / cutTrak.getMdia().getMdhd().getTimeScale();
       long cutDuration = cutTrak.getMdia().getMdhd().getDuration() * timeScaleRatio;
-      cutTrak.getTkhd().setDuration(cutDuration);
+      cutTrak.fixupDuration(cutDuration);
       if (cutDuration > cutMoov.mvhd.getDuration()) {
         cutMoov.mvhd.setDuration(cutDuration);
       }

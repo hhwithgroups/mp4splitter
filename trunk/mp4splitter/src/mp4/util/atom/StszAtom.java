@@ -75,7 +75,7 @@ public class StszAtom extends LeafAtom {
    * @param sampleNum the sample numbers
    * @return the size of the sample
    */
-  public long getSampleSize(long sampleNum) {
+  public long getTableSampleSize(long sampleNum) {
     if (sampleNum > Integer.MAX_VALUE) {
       return 0;
     }
@@ -87,7 +87,7 @@ public class StszAtom extends LeafAtom {
    * @param index the table index
    * @param sampleSize the sample size
    */
-  public void setSampleSize(int index, long sampleSize) {
+  public void setTableSampleSize(int index, long sampleSize) {
     data.addUnsignedInt(TABLE_OFFSET + ((index - 1) * ENTRY_SIZE), sampleSize);
   }
   
@@ -107,11 +107,11 @@ public class StszAtom extends LeafAtom {
     else {
       long numEntries = getNumEntries();
       cutStsz.allocateData(numEntries - sampleNum + 1);
-      setSampleSize(0);
+      cutStsz.setSampleSize(0);
       cutStsz.setNumEntries(numEntries - sampleNum + 1);
-      int entryNumber = 0;
-      for (long i = sampleNum; i < numEntries; i++, entryNumber++) {
-        cutStsz.setSampleSize(entryNumber, getSampleSize(i));
+      int entryNumber = 1;
+      for (long i = sampleNum; i <= numEntries; i++, entryNumber++) {
+        cutStsz.setTableSampleSize(entryNumber, getTableSampleSize(i));
       }
     }
     return cutStsz;

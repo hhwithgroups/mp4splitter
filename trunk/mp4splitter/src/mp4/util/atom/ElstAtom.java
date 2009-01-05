@@ -14,6 +14,11 @@ public class ElstAtom extends LeafAtom {
   private static final int MEDIA_TIME = 4;
   private static final int MEDIA_RATE = 8;
   
+  private static final int ENTRY_SIZE = 12;
+  
+  /**
+   * Construct an empty elst atom.
+   */
   public ElstAtom() {
     super(new byte[]{'e','l','s','t'});
   }
@@ -25,21 +30,60 @@ public class ElstAtom extends LeafAtom {
   public ElstAtom(ElstAtom old) {
     super(old);
   }
-  
-  public long getEntries() {
+  /**
+   * Set a new duration for each elst entry.
+   * @param duration the new duration value
+   */
+  public void setDuration(long duration) {
+    for (int i = 0; i < getNumEntries(); i++) {
+      setDuration(i, duration);
+    }
+  }
+
+  /**
+   * Return the number of entries in the edit list
+   * @return the number of entries in the edit list
+   */
+  public long getNumEntries() {
     return data.getUnsignedInt(ENTRIES_OFFSET);
   }
   
-  public long getDuration() {
-    return data.getUnsignedInt(TABLE_OFFSET + TRACK_DURATION);
+  /**
+   * Return the track duration for the specified index
+   * @param index the table index
+   * @return the track duration for the specified index
+   */
+  public long getDuration(int index) {
+    return data.getUnsignedInt(TABLE_OFFSET + (index * ENTRY_SIZE) + TRACK_DURATION);
   }
   
-  public long getTime() {
-    return data.getUnsignedInt(TABLE_OFFSET + MEDIA_TIME);
+  /**
+   * Set the track duration for the specified edit list entry
+   * @param index the table index
+   * @param val the new duration
+   */
+  public void setDuration(int index, long val) {
+    data.addUnsignedInt(TABLE_OFFSET + (index * ENTRY_SIZE) + TRACK_DURATION, val);
   }
   
-  public long getRate() {
-    return data.getUnsignedInt(TABLE_OFFSET + MEDIA_RATE);
+  /**
+   * Return the media time for the specified index
+   * @param index the table index
+   * @return the media time for the specified index
+   */
+  public long getMediaTime(int index) {
+    return data.getUnsignedInt(TABLE_OFFSET + (index * ENTRY_SIZE) + MEDIA_TIME);
+  }
+  
+  /**
+   * Return the media rate for the specified index.  The media rate is a 
+   * fixed point value.  The first 16-bits is the integer and the next 16-bits
+   * is the fraction.
+   * @param index the table index
+   * @return the media rate for the specified index
+   */
+  public double getMediaRate(int index) {
+    return data.getFixedPoint(TABLE_OFFSET + (index * ENTRY_SIZE) + MEDIA_RATE);
   }
   
   @Override

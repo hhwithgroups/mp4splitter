@@ -54,7 +54,7 @@ public class DinfAtom extends ContainerAtom {
    */
   @Override
   protected void recomputeSize() {
-    setSize(dref.size());
+    setSize(ATOM_HEADER_SIZE + dref.size());
   }
 
   /**
