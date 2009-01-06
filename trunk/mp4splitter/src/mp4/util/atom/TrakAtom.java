@@ -100,17 +100,23 @@ public class TrakAtom extends ContainerAtom {
   }
 
   /**
-   * Cut the trak atom at the specified time.
-   * @param time the time to cut the trak
+   * Cut the trak atom at the specified time (seconds).  The time needs to be normalized
+   * to the media's timescale.
+   * @param time the time in seconds to cut the track 
+   * @param movieTimeScale the timescale for the movie
    * @return a new trak atom that has been cut
    */
-  public TrakAtom cut(long time) {
+  public TrakAtom cut(long time, long movieTimeScale) {
     TrakAtom cutTrak = new TrakAtom();
-    long normalizedTime = time * mdia.getMdhd().getTimeScale();
-    cutTrak.tkhd = tkhd.cut(normalizedTime);
-    cutTrak.mdia = mdia.cut(normalizedTime);
+    long mediaTimeScale = mdia.getMdhd().getTimeScale();
+    long mediaTime = time * mediaTimeScale;
     if (edts != null) {
-      cutTrak.edts = edts.cut();
+      //mediaTime = edts.editTime(time, mediaTimeScale, movieTimeScale);
+    }
+    cutTrak.tkhd = tkhd.cut(mediaTime);
+    cutTrak.mdia = mdia.cut(mediaTime);
+    if (edts != null) {
+      cutTrak.edts = null; // edts.cut();
     }
     if (udta != null) {
       cutTrak.udta = udta.cut();

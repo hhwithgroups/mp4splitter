@@ -90,4 +90,24 @@ public class ElstAtom extends LeafAtom {
   public void accept(AtomVisitor v) throws AtomException {
     v.visit(this);
   }
+  
+  /**
+   * Update the specified time with information in the edit list
+   * @param time the time in seconds
+   * @param mediaTS the media time scale
+   * @param movieTS the movie time scale
+   * @return the updated time in the media time scale
+   */
+  public long editTime(long time, long mediaTS, long movieTS) {
+    long movieTime = time * movieTS;
+    long mediaTime = time * mediaTS;
+    for (int i = 0; i < getNumEntries(); i++) {
+      if (movieTime < getDuration(i) && getMediaTime(i) != -1) {
+        // we don't handle dwell edits
+        assert getMediaRate(i) != 0;
+        return mediaTime - getMediaTime(i);
+      }
+    }
+    return mediaTime;
+  }
 }

@@ -133,11 +133,11 @@ public class MoovAtom extends ContainerAtom {
    * @return the new movie atom
    */
   public MoovAtom cut(long time) {
-    long timeScale = mvhd.getTimeScale();
+    long movieTimeScale = mvhd.getTimeScale();
     long duration = mvhd.getDuration();
     
-    System.out.println("DBG: Movie time " + (duration/timeScale) + " sec, cut at " + time + "sec");
-    System.out.println("\tDBG: ts " + timeScale + " cut at " + (time * timeScale));
+    System.out.println("DBG: Movie time " + (duration/movieTimeScale) + " sec, cut at " + time + "sec");
+    System.out.println("\tDBG: ts " + movieTimeScale + " cut at " + (time * movieTimeScale));
     
     MoovAtom cutMoov = new MoovAtom();
     cutMoov.mvhd = mvhd.cut();
@@ -150,10 +150,10 @@ public class MoovAtom extends ContainerAtom {
     cutMoov.traks = new LinkedList<TrakAtom>();
     // iterate over each track and cut the track
     for (Iterator<TrakAtom> i = getTracks(); i.hasNext(); ) {
-      TrakAtom cutTrak = i.next().cut(time);
+      TrakAtom cutTrak = i.next().cut(time, movieTimeScale);
       cutMoov.traks.add(cutTrak);
-      // need to convert the track timescale to the movie timescale
-      long timeScaleRatio = timeScale / cutTrak.getMdia().getMdhd().getTimeScale();
+      // need to convert the media timescale to the movie timescale
+      long timeScaleRatio = movieTimeScale / cutTrak.getMdia().getMdhd().getTimeScale();
       long cutDuration = cutTrak.getMdia().getMdhd().getDuration() * timeScaleRatio;
       cutTrak.fixupDuration(cutDuration);
       if (cutDuration > cutMoov.mvhd.getDuration()) {

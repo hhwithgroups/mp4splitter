@@ -210,11 +210,15 @@ public class Mp4Dump extends DefaultAtomVisitor {
     else {
       out.println();
       level = level + 1;
+      long totalSize = 0;
       for (int i = 0; i < atom.getNumEntries() && i < maxEntries; i++) {
         indent();
         out.println((i + 1) + " "  + atom.getTableSampleSize(i+1));
+        totalSize += atom.getTableSampleSize(i+1);
       }
       level = level - 1;
+      indent();
+      out.println("Total size = " + totalSize);
     }
  }
 

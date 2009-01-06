@@ -22,7 +22,7 @@ public class EdtsAtom extends ContainerAtom {
   
   /**
    * Copy constructor.  Performs a deep copy.
-   * @param old the verison to copy
+   * @param old the version to copy
    */
   public EdtsAtom(EdtsAtom old) {
     super(old);
@@ -88,5 +88,19 @@ public class EdtsAtom extends ContainerAtom {
     if (elst != null) {
       elst.writeData(out);
     }
+  }
+
+  /**
+   * Update the specified time with information in the edit list
+   * @param time the time in seconds
+   * @param mediaTS the media time scale
+   * @param movieTS the movie time scale
+   * @return the updated time in the media time scale
+   */
+  public long editTime(long time, long mediaTS, long movieTS) {
+    if (elst == null) {
+      return time * mediaTS;
+    }
+    return elst.editTime(time, mediaTS, movieTS);
   }
 }
