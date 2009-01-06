@@ -66,8 +66,8 @@ public class MdatAtom extends LeafAtom {
   public void writeData(DataOutput out) throws IOException {
     writeHeader(out);
     long numBytesToRead = dataSize();
-    // read data in using 10 MB chunks
-    byte[] input = new byte[10*1024*1024];
+    // read data in using 50 MB chunks
+    byte[] input = new byte[50*1024*1024];
     while (numBytesToRead > 0) {
       int read = in.read(input);
       out.write(input, 0, read);
