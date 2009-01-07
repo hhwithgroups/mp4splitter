@@ -102,7 +102,7 @@ public class StszAtom extends LeafAtom {
     if (sampleSize > 0) {
       cutStsz.allocateData(0);
       cutStsz.setSampleSize(sampleSize);
-      cutStsz.setNumEntries(0);
+      cutStsz.setNumEntries(getNumEntries() - sampleNum + 1);
     }
     else {
       long numEntries = getNumEntries();
