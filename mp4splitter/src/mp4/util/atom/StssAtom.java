@@ -109,7 +109,7 @@ public class StssAtom extends LeafAtom {
     cutStss.allocateData(numEntries - i);
     cutStss.setNumEntries(numEntries - i);
     for (int entryNumber = 0; i < numEntries; i++, entryNumber++) {
-      cutStss.setSampleEntry(entryNumber, getSampleEntry(i));
+      cutStss.setSampleEntry(entryNumber, getSampleEntry(i) - sampleNum + 1);
     }
     return cutStss;
   }
