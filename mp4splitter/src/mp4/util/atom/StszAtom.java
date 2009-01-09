@@ -84,11 +84,11 @@ public class StszAtom extends LeafAtom {
   
   /**
    * Set the sample size for the specified table entry
-   * @param index the table index
+   * @param sampleNum the sample number
    * @param sampleSize the sample size
    */
-  public void setTableSampleSize(int index, long sampleSize) {
-    data.addUnsignedInt(TABLE_OFFSET + ((index - 1) * ENTRY_SIZE), sampleSize);
+  public void setTableSampleSize(int sampleNum, long sampleSize) {
+    data.addUnsignedInt(TABLE_OFFSET + ((sampleNum - 1) * ENTRY_SIZE), sampleSize);
   }
   
   /**
