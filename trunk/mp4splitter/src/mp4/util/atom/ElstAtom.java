@@ -105,7 +105,7 @@ public class ElstAtom extends LeafAtom {
       if (movieTime < getDuration(i) && getMediaTime(i) != -1) {
         // we don't handle dwell edits
         assert getMediaRate(i) != 0;
-        return mediaTime - getMediaTime(i);
+        return mediaTime + getMediaTime(i);
       }
     }
     return mediaTime;
