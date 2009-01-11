@@ -227,10 +227,14 @@ public class Mp4Dump extends DefaultAtomVisitor {
     printLeafHeader(atom);
     out.println(" entries " + atom.getNumEntries());
     level = level + 1;
+    long time = 0;
     for (int i = 0; i < atom.getNumEntries() && i < maxEntries; i++) {
       indent();
       out.println(atom.getSampleCount(i) + " " + atom.getSampleDuration(i));
+      time += atom.getSampleCount(i) * atom.getSampleDuration(i);
     }
+    indent();
+    out.println("stts time = " + time);
     level = level - 1;
   }
 

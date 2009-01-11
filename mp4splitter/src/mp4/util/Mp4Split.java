@@ -31,6 +31,9 @@ public class Mp4Split extends DefaultAtomVisitor {
   // the input mp4 file
   private DataInputStream mp4file;
   
+  public static String inputFile;
+  public static boolean mdat = true;
+  
   @Override
   protected void defaultAction(Atom atom) throws AtomException {
     if (atom.isContainer()) {
@@ -146,7 +149,9 @@ public class Mp4Split extends DefaultAtomVisitor {
       DataOutputStream dos = new DataOutputStream(new FileOutputStream("test.mp4"));
       ftyp.writeData(dos);
       cutMoov.writeData(dos);
-      cutMdat.writeData(dos);
+      if (Mp4Split.mdat) {
+        cutMdat.writeData(dos);
+      }
       
      } catch (AtomException e) {
       System.err.println("Error parseing Mp4 file " + e);
@@ -159,10 +164,42 @@ public class Mp4Split extends DefaultAtomVisitor {
   }
   
   /**
+   * Process the command line arguments.
+   * @param args the user-specified arguments
+   */
+  private static void processArgs(String[] args) {
+    int i = 0;
+    while (i < args.length) {
+      String arg = args[i];
+      if (arg.equals("-in")) {
+        inputFile = args[++i];
+      }
+      else if (arg.equals("-no_mdat")) {
+        mdat = false;
+      }
+      else {
+        help();
+      }
+      i++;
+    }
+    if (inputFile == null) {
+      help();
+    }
+  }
+  
+  private static void help() {
+    System.out.println("Mp4Split <args>");
+    System.out.println("  -in inputfile.mp4");
+    System.out.println("  [-no_mdat]");
+    System.exit(-1);
+  }
+    
+  /**
    * @param args
    */
   public static void main(String[] args) {
-    Mp4Split splitter = new Mp4Split(args[0]);
+    processArgs(args);
+    Mp4Split splitter = new Mp4Split(inputFile);
     splitter.splitMp4();
   }
 

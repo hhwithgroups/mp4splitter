@@ -28,7 +28,7 @@ public class TrakAtom extends ContainerAtom {
   }
   
   /**
-   * Copy constructor.  Perofrms a deep copy.
+   * Copy constructor.  Performs a deep copy.
    * @param old the version to copy
    */
   public TrakAtom(TrakAtom old) {
@@ -112,8 +112,8 @@ public class TrakAtom extends ContainerAtom {
     long mediaTime = time * mediaTimeScale;
     System.out.println("DBG: media time " + mediaTime);
     if (edts != null) {
-      //mediaTime = edts.editTime(time, mediaTimeScale, movieTimeScale);
-      //System.out.println("DBG: media time after edit " + mediaTime);
+      // mediaTime = edts.editTime(time, mediaTimeScale, movieTimeScale);
+      // System.out.println("DBG: media time after edit " + mediaTime);
     }
     cutTrak.tkhd = tkhd.cut(mediaTime);
     cutTrak.mdia = mdia.cut(mediaTime);

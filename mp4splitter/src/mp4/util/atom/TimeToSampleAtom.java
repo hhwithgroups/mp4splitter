@@ -92,7 +92,7 @@ public abstract class TimeToSampleAtom extends LeafAtom {
   public long timeToSample(long time) {
     long entries = getNumEntries();
     long lowerBoundTime = 0;
-    long lowerBoundSample = 0;
+    long lowerBoundSample = 1;
     for (int i = 0; i < entries; i++) {
       long count = getSampleCount(i);
       long duration = getSampleDuration(i);

@@ -144,30 +144,31 @@ public class StscAtom extends LeafAtom {
   public StscAtom cut(long sampleNum) {    
     long numEntries = getNumEntries();
     int i;
-    int lowerBoundSampleNum = 0;
+    int sampleNumCounter = 1;
     for (i = 0; i < numEntries - 1; i++) {
       long maxSamplesInChunk = (getFirstChunk(i+1) - getFirstChunk(i)) * getSamplesPerChunk(i);
-      if (sampleNum <= lowerBoundSampleNum + maxSamplesInChunk) {
+      if (sampleNum < sampleNumCounter + maxSamplesInChunk) {
         // we've found the stsc with the sample, so we can create the new table
         break;
       }
-      lowerBoundSampleNum += maxSamplesInChunk;
+      sampleNumCounter += maxSamplesInChunk;
     }
     
     StscAtom cutStsc = new StscAtom();
     // create the new table.
     long newNumEntries = numEntries - i;
     int entryNumber = 0;
-    long chunkNum = ((sampleNum - lowerBoundSampleNum - 1) / getSamplesPerChunk(i)) + getFirstChunk(i);
+    long chunkNum = ((sampleNum - sampleNumCounter) / getSamplesPerChunk(i)) + getFirstChunk(i);
     // check if the number of samples per chunk has changed
-    if ((sampleNum - lowerBoundSampleNum) % getSamplesPerChunk(i) > 0) {
+    if ((sampleNum - sampleNumCounter) % getSamplesPerChunk(i) > 0) {
       // the number of samples per chunk has changed, so we need to split
       // the table entry into two entries
       cutStsc.allocateData(newNumEntries + 1);
       cutStsc.setNumEntries(newNumEntries + 1);
       // the first entry is for the new number of samples per chunk
       cutStsc.setFirstChunk(entryNumber, 1);
-      cutStsc.setSamplesPerChunk(entryNumber, (sampleNum - lowerBoundSampleNum) % getSamplesPerChunk(i));
+      long spc = getSamplesPerChunk(i) - (sampleNum - sampleNumCounter) % getSamplesPerChunk(i);
+      cutStsc.setSamplesPerChunk(entryNumber, spc);
       cutStsc.setDescriptionId(entryNumber, getDescriptionId(i));
       entryNumber++;
       // the second entry is for the existing samples per chunk, but the number of samples has changed
