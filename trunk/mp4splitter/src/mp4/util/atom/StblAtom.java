@@ -107,10 +107,12 @@ public class StblAtom extends ContainerAtom {
    * Compute the size for the stbl container atom.
    */
   protected void recomputeSize() {
-    long newSize = stsd.size() + stts.size() + stsz.size() + stsc.size() + 
-        stco.size() + stss.size();
+    long newSize = stsd.size() + stts.size() + stsz.size() + stsc.size() + stco.size();
     if (ctts != null) {
       newSize += ctts.size();
+    }
+    if (stss != null) {
+      newSize += stss.size();
     }
     setSize(ATOM_HEADER_SIZE + newSize);
   }
@@ -122,7 +124,10 @@ public class StblAtom extends ContainerAtom {
    */
   public StblAtom cut(long time) {
     long sampleNum = getStts().timeToSample(time);
-    long keyFrame = getStss().getKeyFrame(sampleNum);
+    long keyFrame = sampleNum;
+    if (getStss() != null) {
+      keyFrame = getStss().getKeyFrame(sampleNum);
+    }
     System.out.println("\tDBG: sampleNum " + sampleNum + " sync frame " + keyFrame);
     
     long chunk = getStsc().sampleToChunk(keyFrame);
@@ -140,7 +145,9 @@ public class StblAtom extends ContainerAtom {
     if (ctts != null) {
       cutStbl.ctts = ctts.cut(keyFrame);
     }
-    cutStbl.stss = stss.cut(keyFrame);
+    if (stss != null) {
+      cutStbl.stss = stss.cut(keyFrame);
+    }
     // fix the size of the container atom
     cutStbl.recomputeSize();
     return cutStbl;
@@ -167,6 +174,8 @@ public class StblAtom extends ContainerAtom {
     if (ctts != null) {
       ctts.writeData(out);
     }
-    stss.writeData(out);
+    if (stss != null) {
+      stss.writeData(out);
+    }
   }
 }
