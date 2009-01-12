@@ -32,7 +32,9 @@ public class Mp4Split extends DefaultAtomVisitor {
   private DataInputStream mp4file;
   
   public static String inputFile;
+  public static String outputFile;
   public static boolean mdat = true;
+  public static long time;
   
   @Override
   protected void defaultAction(Atom atom) throws AtomException {
@@ -129,7 +131,7 @@ public class Mp4Split extends DefaultAtomVisitor {
       System.out.println("DBG: moov size " + moov.dataSize());
       System.out.println("DBG: mdat size " + mdat.dataSize());
   
-      MoovAtom cutMoov = moov.cut(3600);
+      MoovAtom cutMoov = moov.cut(time);
       System.out.println("DBG: moov chunk " + moov.firstDataByteOffset());
       System.out.println("DBG: cut moov chunk " + cutMoov.firstDataByteOffset());
       long mdatSkip = cutMoov.firstDataByteOffset() - moov.firstDataByteOffset();
@@ -146,7 +148,7 @@ public class Mp4Split extends DefaultAtomVisitor {
       System.out.println("DBG: Cut Movie time " + 
           (cutMoov.getMvhd().getDuration()/cutMoov.getMvhd().getTimeScale()) + " sec ");
       
-      DataOutputStream dos = new DataOutputStream(new FileOutputStream("test.mp4"));
+      DataOutputStream dos = new DataOutputStream(new FileOutputStream(outputFile));
       ftyp.writeData(dos);
       cutMoov.writeData(dos);
       if (Mp4Split.mdat) {
@@ -174,6 +176,12 @@ public class Mp4Split extends DefaultAtomVisitor {
       if (arg.equals("-in")) {
         inputFile = args[++i];
       }
+      else if (arg.equals("-out")) {
+        outputFile = args[++i];
+      }
+      else if (arg.equals("-time")) {
+        time = Long.valueOf(args[++i]);
+      }
       else if (arg.equals("-no_mdat")) {
         mdat = false;
       }
@@ -189,7 +197,9 @@ public class Mp4Split extends DefaultAtomVisitor {
   
   private static void help() {
     System.out.println("Mp4Split <args>");
-    System.out.println("  -in inputfile.mp4");
+    System.out.println("  -in <inputfile.mp4>");
+    System.out.println("  -out <outputfile.mp4>");
+    System.out.println("  -time <seconds>");
     System.out.println("  [-no_mdat]");
     System.exit(-1);
   }
