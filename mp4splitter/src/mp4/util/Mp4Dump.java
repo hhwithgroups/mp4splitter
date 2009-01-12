@@ -282,7 +282,7 @@ public class Mp4Dump extends DefaultAtomVisitor {
       atom.setSize(size);
       atom.accept(this);
     } catch (ClassNotFoundException e) {
-      throw new AtomException("Class not found");
+      throw new AtomException("Class not found " + e);
     } catch (InstantiationException e) {
       throw new AtomException("Unable to instantiate atom");
     } catch (IllegalAccessException e) {
