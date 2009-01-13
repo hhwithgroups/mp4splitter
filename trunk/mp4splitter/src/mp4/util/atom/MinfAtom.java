@@ -42,20 +42,68 @@ public class MinfAtom extends ContainerAtom {
     stbl = new StblAtom(old.stbl);
   }
   
+  /**
+   * Return the video media header, if there is one
+   * @return the video media header
+   */
   public VmhdAtom getVmhd() {
     return vmhd;
   }
   
+  /**
+   * Set the video media header.
+   * @param vmhd the new video media header
+   */
+  public void setVmhd(VmhdAtom vmhd) {
+    this.vmhd = vmhd;
+  }
+  
+  /**
+   * Return the sound media header.
+   * @return the sound media header.
+   */
   public SmhdAtom getSmhd() {
     return smhd;
   }
   
+  /**
+   * Set the sound media header.
+   * @param smhd the new sound media header
+   */
+  public void setSmhd(SmhdAtom smhd) {
+    this.smhd = smhd;
+  }
+  
+  /**
+   * Return the data information atom
+   * @return the data information atom
+   */
   public DinfAtom getDinf() {
     return dinf;
   }
   
+  /**
+   * Set the data information atom.
+   * @param dinf the new data information atom
+   */
+  public void setDinf(DinfAtom dinf) {
+    this.dinf = dinf;
+  }
+  
+  /**
+   * Return the sample table atom
+   * @return the sample table atom.
+   */
   public StblAtom getStbl() {
     return stbl;
+  }
+  
+  /**
+   * Set the sample table atom.
+   * @param stbl the new sample table atom
+   */
+  public void setStbl(StblAtom stbl) {
+    this.stbl = stbl;
   }
   
   /**
@@ -107,13 +155,13 @@ public class MinfAtom extends ContainerAtom {
   public MinfAtom cut(long time) {
     MinfAtom cutMinf = new MinfAtom();
     if (vmhd != null) {
-      cutMinf.vmhd = vmhd.cut();
+      cutMinf.setVmhd(vmhd.cut());
     }
     if (smhd != null) {
-      cutMinf.smhd = smhd.cut();
+      cutMinf.setSmhd(smhd.cut());
     }
-    cutMinf.dinf = dinf.cut();
-    cutMinf.stbl = stbl.cut(time);
+    cutMinf.setDinf(dinf.cut());
+    cutMinf.setStbl(stbl.cut(time));
     cutMinf.recomputeSize();
     return cutMinf;
   }

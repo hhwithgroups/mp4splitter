@@ -63,18 +63,18 @@ public class TkhdAtom extends LeafAtom {
   
   /**
    * Set the duration for the track.  The track duration is the sum of the sample
-   * durations (in the absence of an edit list)
-   * @param duration the track's duration.
+   * durations (in the absence of an edit list).  The timescale is from the movie header atom.
+   * @param duration the track's duration in movie's timescale
    */
   public void setDuration(long duration) {
     data.addUnsignedInt(DURATION_OFFSET, duration);
   }
   
   /**
-   * Cut the tkhd atom at the specified time.  This changes the duration value.
-   * @param time the time at which the atom is cut
+   * Cut the tkhd atom at the specified time.  The duration for the track header is set
+   * to zero initially.  It must be filled in later.
    */
-  public TkhdAtom cut(long time) {
+  public TkhdAtom cut() {
     TkhdAtom cutTkhd = new TkhdAtom(this);
     cutTkhd.setDuration(0);
     return cutTkhd;

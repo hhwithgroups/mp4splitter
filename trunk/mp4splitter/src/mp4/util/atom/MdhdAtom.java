@@ -96,6 +96,14 @@ public class MdhdAtom extends LeafAtom {
   }
   
   /**
+   * Return the duration of the media divided by the time-scale.
+   * @return the normalized duration of the media;
+   */
+  public long getDurationNormalized() {
+    return getDuration() / getTimeScale();
+  }
+  
+  /**
    * Cut the mdhd atom at the specified time.  This changes the duration value only, 
    * which is calculated using the new stbl atom.
    * @return a new mdhd atom (duration value must be changed by the caller)

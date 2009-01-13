@@ -44,6 +44,14 @@ public class MdiaAtom extends ContainerAtom {
   }
   
   /**
+   * Set the media header atom.
+   * @param mdhd the new media header atom
+   */
+  public void setMdhd(MdhdAtom mdhd) {
+    this.mdhd = mdhd;
+  }
+  
+  /**
    * Return the handler type atom
    * @return the handler type atom
    */
@@ -52,11 +60,27 @@ public class MdiaAtom extends ContainerAtom {
   }
   
   /**
+   * Set the media handler.
+   * @param hdlr the new handler
+   */
+  public void setHdlr(HdlrAtom hdlr) {
+    this.hdlr = hdlr;
+  }
+  
+  /**
    * Return the media information atom
    * @return the media information atom
    */
   public MinfAtom getMinf() {
     return minf;
+  }
+  
+  /**
+   * Set the minf atom for the media.
+   * @param minf the new minf atom
+   */
+  public void setMinf(MinfAtom minf) {
+    this.minf = minf;
   }
   
   /**
@@ -96,11 +120,12 @@ public class MdiaAtom extends ContainerAtom {
    */
   public MdiaAtom cut(long time) {
     MdiaAtom cutMdia = new MdiaAtom();
-    cutMdia.mdhd = mdhd.cut();
-    cutMdia.hdlr = hdlr.cut();
-    cutMdia.minf = minf.cut(time);
+    cutMdia.setMdhd(mdhd.cut());
+    cutMdia.setHdlr(hdlr.cut());
+    cutMdia.setMinf(minf.cut(time));
     // update the duration of the media
-    cutMdia.mdhd.setDuration(cutMdia.minf.getStbl().getStts().computeDuration());
+    long newDuration = cutMdia.getMinf().getStbl().getStts().computeDuration();
+    cutMdia.getMdhd().setDuration(newDuration);
     cutMdia.recomputeSize();
     return cutMdia;
   }

@@ -217,8 +217,6 @@ public class Mp4Dump extends DefaultAtomVisitor {
         totalSize += atom.getTableSampleSize(i+1);
       }
       level = level - 1;
-      indent();
-      out.println("Total size = " + totalSize);
     }
  }
 
