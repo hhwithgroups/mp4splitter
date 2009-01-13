@@ -145,8 +145,7 @@ public class Mp4Split extends DefaultAtomVisitor {
       
       System.out.println("DBG: movie skip " + mdatSkip);
       
-      System.out.println("DBG: Cut Movie time " + 
-          (cutMoov.getMvhd().getDuration()/cutMoov.getMvhd().getTimeScale()) + " sec ");
+      System.out.println("DBG: Cut Movie time " + cutMoov.getMvhd().getDurationNormalized() + " sec ");
       
       DataOutputStream dos = new DataOutputStream(new FileOutputStream(outputFile));
       ftyp.writeData(dos);

@@ -57,11 +57,27 @@ public class MoovAtom extends ContainerAtom {
   }
   
   /**
+   * Set the movie header atom
+   * @param mvhd the new movie header atom
+   */
+  public void setMvhd(MvhdAtom mvhd) {
+    this.mvhd = mvhd;
+  }
+  
+  /**
    * Return the initial object descriptor atom
    * @return the initial object descriptor atom
    */
   public IodsAtom getIods() {
     return iods;
+  }
+  
+  /**
+   * Set the initial object descriptor atom
+   * @param iods the new initial object descriptor
+   */
+  public void setIods(IodsAtom iods) {
+    this.iods = iods;
   }
   
   /**
@@ -73,12 +89,32 @@ public class MoovAtom extends ContainerAtom {
   }
   
   /**
+   * Set the user-data atom
+   * @param udta the new user-data atom.
+   */
+  public void setUdta(UdtaAtom udta) {
+    this.udta = udta;
+  }
+  
+  /**
    * Return an iterator with the media's tracks.  For most movies, there are two tracks, the sound 
    * track and the video track.
    * @return an iterator with the movie traks.
    */
   public Iterator<TrakAtom> getTracks() {
     return traks.iterator();
+  }
+  
+  /**
+   * Add a track to the movie.  If no tracks have been added, then allocate
+   * space for the tracks.
+   * @param trak a new track.
+   */
+  public void addTrack(TrakAtom trak) {
+    if (this.traks == null) {
+      this.traks = new LinkedList<TrakAtom>();
+    }
+    this.traks.add(trak);
   }
   
   /**
@@ -140,24 +176,23 @@ public class MoovAtom extends ContainerAtom {
     System.out.println("\tDBG: ts " + movieTimeScale + " cut at " + (time * movieTimeScale));
     
     MoovAtom cutMoov = new MoovAtom();
-    cutMoov.mvhd = mvhd.cut();
+    cutMoov.setMvhd(mvhd.cut());
     if (iods != null) {
-      cutMoov.iods = iods.cut();
+      cutMoov.setIods(iods.cut());
     }
     if (udta != null) {
-      cutMoov.udta = udta.cut();
+      cutMoov.setUdta(udta.cut());
     }
-    cutMoov.traks = new LinkedList<TrakAtom>();
     // iterate over each track and cut the track
     for (Iterator<TrakAtom> i = getTracks(); i.hasNext(); ) {
       TrakAtom cutTrak = i.next().cut(time, movieTimeScale);
-      cutMoov.traks.add(cutTrak);
-      // need to convert the media timescale to the movie timescale
-      long timeScaleRatio = movieTimeScale / cutTrak.getMdia().getMdhd().getTimeScale();
-      long cutDuration = cutTrak.getMdia().getMdhd().getDuration() * timeScaleRatio;
+      cutMoov.addTrack(cutTrak);
+      // need to convert the media time-scale to the movie time-scale
+      long mediaDuration = cutTrak.getMdia().getMdhd().getDurationNormalized();
+      long cutDuration = mediaDuration * movieTimeScale;
       cutTrak.fixupDuration(cutDuration);
-      if (cutDuration > cutMoov.mvhd.getDuration()) {
-        cutMoov.mvhd.setDuration(cutDuration);
+      if (cutDuration > cutMoov.getMvhd().getDuration()) {
+        cutMoov.getMvhd().setDuration(cutDuration);
       }
     }
     cutMoov.recomputeSize();

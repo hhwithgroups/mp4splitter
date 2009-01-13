@@ -68,15 +68,19 @@ public class MvhdAtom extends LeafAtom {
   }
   
   /**
-   * Return the time scale for the mvhd atom
-   * @return the time scale
+   * Return the time-scale for the mvhd atom
+   * @return the time-scale
    */
   public long getTimeScale() {
     return data.getUnsignedInt(TIMESCALE_OFFSET);
   }
   
-  public void setTimeScale() {
-    data.addUnsignedInt(TIMESCALE_OFFSET);
+  /**
+   * Set the time-scale for the mvhd atom
+   * @param ts the new time-scale
+   */
+  public void setTimeScale(long ts) {
+    data.addUnsignedInt(TIMESCALE_OFFSET, ts);
   }
   
   /**
@@ -95,6 +99,14 @@ public class MvhdAtom extends LeafAtom {
    */
   public void setDuration(long duration) {
     data.addUnsignedInt(DURATION_OFFSET, duration);
+  }
+  
+  /**
+   * Return the normalized time-scale for the movie.
+   * @return the movie's normalized time-scale.
+   */
+  public long getDurationNormalized() {
+    return getDuration() / getTimeScale();
   }
   
   /**

@@ -43,20 +43,68 @@ public class TrakAtom extends ContainerAtom {
     }
   }
 
+  /**
+   * Return the track header atom.
+   * @return the track header atom
+   */
   public TkhdAtom getTkhd() { 
     return tkhd; 
   }
 
+  /**
+   * Set the track header atom
+   * @param tkhd the new track header atom
+   */
+  public void setTkhd(TkhdAtom tkhd) {
+    this.tkhd = tkhd;
+  }
+
+  /**
+   * Return the media container
+   * @return the media container
+   */
   public MdiaAtom getMdia() { 
     return mdia; 
   }
+  
+  /**
+   * Set the media container atom
+   * @param mdia the new media container
+   */
+  public void setMdia(MdiaAtom mdia) {
+    this.mdia = mdia;
+  }
 
+  /**
+   * Return the edit list atom
+   * @return return edit list atom
+   */
   public EdtsAtom getEdts() {
     return edts;
   }
   
+  /**
+   * Set the track edit list.
+   * @param edts the new track edit list
+   */
+  public void setEdts(EdtsAtom edts) {
+    this.edts = edts;
+  }
+  
+  /**
+   * Return the user-data atom
+   * @return the user-data atom
+   */
   public UdtaAtom getUdta() {
     return udta;
+  }
+  
+  /**
+   * Set the user-data atom
+   * @param udta the new user-data atom
+   */
+  public void setUdta(UdtaAtom udta) {
+    this.udta = udta;
   }
   
   /**
@@ -100,11 +148,11 @@ public class TrakAtom extends ContainerAtom {
   }
 
   /**
-   * Cut the trak atom at the specified time (seconds).  The time needs to be normalized
-   * to the media's timescale.
-   * @param time the time in seconds to cut the track 
-   * @param movieTimeScale the timescale for the movie
-   * @return a new trak atom that has been cut
+   * Cut the track atom at the specified time (seconds).  The time needs to be normalized
+   * to the media's time-scale.
+   * @param time the normalized time, in seconds, to cut the track 
+   * @param movieTimeScale the time-scale for the movie
+   * @return a new track atom that has been cut
    */
   public TrakAtom cut(long time, long movieTimeScale) {
     TrakAtom cutTrak = new TrakAtom();
@@ -115,13 +163,13 @@ public class TrakAtom extends ContainerAtom {
       mediaTime = edts.editTime(time, mediaTimeScale, movieTimeScale);
       System.out.println("DBG: media time after edit " + mediaTime);
     }
-    cutTrak.tkhd = tkhd.cut(mediaTime);
-    cutTrak.mdia = mdia.cut(mediaTime);
+    cutTrak.setTkhd(tkhd.cut());
+    cutTrak.setMdia(mdia.cut(mediaTime));
     if (edts != null) {
-      cutTrak.edts = null; //edts.cut();
+      cutTrak.setEdts(null); //edts.cut();
     }
     if (udta != null) {
-      cutTrak.udta = udta.cut();
+      cutTrak.setUdta(udta.cut());
     }
     cutTrak.recomputeSize();
     return cutTrak;
@@ -152,8 +200,8 @@ public class TrakAtom extends ContainerAtom {
   
   /**
    * Change the duration of the track.  This requires changing the duration in the track
-   * header and the edit list.
-   * @param duration the new track duration.
+   * header and the edit list.  The duration is in the movie timescale.
+   * @param duration the new track duration in the movie timescale.
    */
   public void fixupDuration(long duration) {
     tkhd.setDuration(duration);
