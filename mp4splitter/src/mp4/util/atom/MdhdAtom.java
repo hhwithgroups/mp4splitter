@@ -102,7 +102,7 @@ public class MdhdAtom extends LeafAtom {
   public long getDurationNormalized() {
     return getDuration() / getTimeScale();
   }
-  
+    
   /**
    * Cut the mdhd atom at the specified time.  This changes the duration value only, 
    * which is calculated using the new stbl atom.

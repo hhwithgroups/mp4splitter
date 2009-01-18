@@ -28,6 +28,24 @@ public class SttsAtom extends TimeToSampleAtom {
   }
   
   /**
+   * Return the sample duration for the specified table index
+   * @param index the stts table index
+   * @return the sample duration for the index entry
+   */
+  public long getSampleDuration(int index) {
+    return getSampleValue(index);
+  }
+  
+  /**
+   * Set the sample duration for the specified table index.
+   * @param index the stts table index
+   * @param duration the new sample duration
+   */
+  public void setSampleDuration(int index, long duration) {
+    setSampleValue(index, duration);
+  }
+  
+  /**
    * Cut the atom at the specified sample.  This method creates a new 
    * stts atom with the new data.  This method searches through the table
    * looking for the appropriate sample.  Once found a new table entry
@@ -46,5 +64,47 @@ public class SttsAtom extends TimeToSampleAtom {
   @Override
   public void accept(AtomVisitor v) throws AtomException {
     v.visit(this); 
+  }
+
+  /**
+   * Convert the sample number to a time, in media time-scale.
+   * @param sampleNum the sample number
+   * @return the time for the sample, in media time scale.
+   */
+  public long sampleToTime(long sampleNum) {
+    long lowerBoundTime = 0;
+    long lowerBoundSample = 1;
+    long numEntries = getNumEntries();
+    for (int i = 0; i < numEntries; i++ ) {
+      long count = getSampleCount(i);
+      long duration = getSampleDuration(i);
+      if ((sampleNum - lowerBoundSample) < count) {
+        return ((sampleNum - lowerBoundSample) * duration) + lowerBoundTime;
+      }
+      lowerBoundTime += count * duration;
+      lowerBoundSample += count;
+    }
+    return 0;
+  }
+
+  /**
+   * Given a time in the media return the data sample.
+   * @param time the media time value
+   * @return the sample number for the specified time
+   */
+  public long timeToSample(long time) {
+    long entries = getNumEntries();
+    long lowerBoundTime = 0;
+    long lowerBoundSample = 1;
+    for (int i = 0; i < entries; i++) {
+      long count = getSampleCount(i);
+      long duration = getSampleDuration(i);
+      if ((time - lowerBoundTime) < (count * duration)) {
+        return ((time - lowerBoundTime) / duration) + lowerBoundSample;
+      }
+      lowerBoundTime += count * duration;
+      lowerBoundSample += count;
+    }
+    return 0;    
   }
 }

@@ -154,10 +154,10 @@ public class TrakAtom extends ContainerAtom {
    * @param movieTimeScale the time-scale for the movie
    * @return a new track atom that has been cut
    */
-  public TrakAtom cut(long time, long movieTimeScale) {
+  public TrakAtom cut(float time, long movieTimeScale) {
     TrakAtom cutTrak = new TrakAtom();
     long mediaTimeScale = mdia.getMdhd().getTimeScale();
-    long mediaTime = time * mediaTimeScale;
+    long mediaTime = (long)(time * mediaTimeScale);
     System.out.println("DBG: media time " + mediaTime);
     if (edts != null) {
       mediaTime = edts.editTime(time, mediaTimeScale, movieTimeScale);
@@ -166,7 +166,7 @@ public class TrakAtom extends ContainerAtom {
     cutTrak.setTkhd(tkhd.cut());
     cutTrak.setMdia(mdia.cut(mediaTime));
     if (edts != null) {
-      cutTrak.setEdts(null); //edts.cut();
+      cutTrak.setEdts(null);
     }
     if (udta != null) {
       cutTrak.setUdta(udta.cut());
@@ -219,4 +219,35 @@ public class TrakAtom extends ContainerAtom {
   public void fixupOffsets(long delta) {
     getMdia().getMinf().getStbl().getStco().fixupOffsets(delta);
   }
+  
+  /**
+   * Return the duration converted to the specified time-scale.
+   * @param timeScale the normalized time-scale value
+   * @return the duration converted to the specified time-scale.
+   */
+  public long convertDuration(long timeScale) {
+    return (long)(getMdia().getMdhd().getDuration() * 
+        ((double)timeScale / (double)getMdia().getMdhd().getTimeScale()));
+  }
+  
+  /**
+   * Convert the specified duration to the media time scale.
+   * @param duration the specified duration to be converted
+   * @param timeScale the time-scale of the specified duration
+   * @return the duration converted to media time-scale.
+   */
+  public long convertToMediaScale(long duration, long timeScale) {
+    return (long)(duration *
+        ((double)getMdia().getMdhd().getTimeScale() / timeScale));
+  }
+  
+  /**
+   * Add an edit to the track.
+   * @param editTime the media time of the edit
+   */
+  public void addEdit(long editTime) {
+    ElstAtom elst = new ElstAtom(tkhd.getDuration(), editTime, 1);
+    setEdts(new EdtsAtom(elst));
+  }
+  
 }

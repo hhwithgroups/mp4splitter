@@ -168,7 +168,7 @@ public class MoovAtom extends ContainerAtom {
    * @param time the time at which the cut is performed.  Must be converted to movie time.
    * @return the new movie atom
    */
-  public MoovAtom cut(long time) {
+  public MoovAtom cut(float time) {
     long movieTimeScale = mvhd.getTimeScale();
     long duration = mvhd.getDuration();
     
@@ -183,20 +183,59 @@ public class MoovAtom extends ContainerAtom {
     if (udta != null) {
       cutMoov.setUdta(udta.cut());
     }
+    long minDuration = Long.MAX_VALUE;
     // iterate over each track and cut the track
     for (Iterator<TrakAtom> i = getTracks(); i.hasNext(); ) {
       TrakAtom cutTrak = i.next().cut(time, movieTimeScale);
       cutMoov.addTrack(cutTrak);
       // need to convert the media time-scale to the movie time-scale
-      long mediaDuration = cutTrak.getMdia().getMdhd().getDurationNormalized();
-      long cutDuration = mediaDuration * movieTimeScale;
+      long cutDuration = cutTrak.convertDuration(movieTimeScale);
       cutTrak.fixupDuration(cutDuration);
       if (cutDuration > cutMoov.getMvhd().getDuration()) {
         cutMoov.getMvhd().setDuration(cutDuration);
       }
+      if (cutDuration < minDuration) {
+        minDuration = cutDuration;
+      }
+    }
+    // check if any edits need to be added 
+    for (Iterator<TrakAtom> i = cutMoov.getTracks(); i.hasNext(); ) { 
+      TrakAtom trak = i.next();
+      long trakDuration = trak.convertDuration(movieTimeScale);
+      System.out.println("DBG: trak duration " + trakDuration);
+      if (trakDuration > minDuration) {
+        long editDuration = trak.convertToMediaScale(trakDuration - minDuration, movieTimeScale);
+        System.out.println("\tDBG: edit duration " + editDuration);
+        // add an edit to the media
+        trak.addEdit(editDuration);
+        trak.recomputeSize();
+      }
     }
     cutMoov.recomputeSize();
     return cutMoov;
+  }
+  
+  /**
+   */
+  public long findCommonTime(float time) {
+    long adjustedTime = 0;
+    for (Iterator<TrakAtom> i = getTracks(); i.hasNext(); ) {
+      TrakAtom trak = i.next();
+      StblAtom stbl = trak.getMdia().getMinf().getStbl();
+      long mediaTimeScale = trak.getMdia().getMdhd().getTimeScale();
+      long mediaTime = (long)(time * mediaTimeScale);
+      if (stbl.getStss() != null) {
+        long sampleNum = stbl.getStts().timeToSample(mediaTime);
+        System.out.println("DBG: sampleNum " + sampleNum);
+        sampleNum = stbl.getStss().getKeyFrame(sampleNum);
+        System.out.println("DBG: new key frame " + sampleNum);
+        mediaTime = stbl.getStts().sampleToTime(sampleNum);
+      }
+      System.out.println("DBG: track " + trak.getTkhd().getTrackId() +
+          " spec time " + (long)(time * mediaTimeScale) + " adj time " + mediaTime +
+          " spec time sec " + (long)(time) + " adj time sec " + (mediaTime/mediaTimeScale));
+    }
+    return adjustedTime;
   }
   
   /**
@@ -252,4 +291,5 @@ public class MoovAtom extends ContainerAtom {
       i.next().fixupOffsets(delta);
     }
   }
+    
 }

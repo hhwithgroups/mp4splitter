@@ -56,7 +56,7 @@ public class StblAtom extends ContainerAtom {
   public StsdAtom getStsd() {
     return stsd;
   }
-  public TimeToSampleAtom getStts() {
+  public SttsAtom getStts() {
     return stts;
   }
   public StszAtom getStsz() {

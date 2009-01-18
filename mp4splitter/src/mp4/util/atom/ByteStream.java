@@ -176,6 +176,17 @@ public class ByteStream {
   }
   
   /**
+   * Add a fixed point value to the byte stream at the specified index.
+   * @param off the offset
+   * @param integerPart the integer part of the fixed point value
+   * @param fractionPart the fraction part of the fixed point value
+   */
+  public void addFixedPoint(int off, int integerPart, int fractionPart) {
+    addUnsignedShort(off, integerPart);
+    addUnsignedShort(off+2, fractionPart);
+  }
+  
+  /**
    * Add an unsigned integer (4 bytes) to the byte stream.
    * @param data the data
    */
@@ -200,6 +211,19 @@ public class ByteStream {
     }
     data[offset++] = (byte) ((val >> 24) & 0xff);
     data[offset++] = (byte) ((val >> 16) & 0xff);
+    data[offset++] = (byte) ((val >> 8) & 0xff);
+    data[offset] = (byte) (val & 0xff);
+  }
+  
+  /**
+   * Add an unsigned short (16-bits) to the byte stream at the specified offset.
+   * @param offset the byte stream offset
+   * @param val the value to add.
+   */
+  public void addUnsignedShort(int offset, int val) {
+    if (offset + 2 > used) {
+      throw new AtomError("Not enough space allocated for the data");
+    }
     data[offset++] = (byte) ((val >> 8) & 0xff);
     data[offset] = (byte) (val & 0xff);
   }

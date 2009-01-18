@@ -13,13 +13,22 @@ public abstract class TimeToSampleAtom extends LeafAtom {
   protected static final int ENTRIES_OFFSET = 4;
   protected static final int TABLE_OFFSET = 8;
   protected static final int SAMPLE_COUNT = 0;
-  protected static final int SAMPLE_DURATION = 4;
+  // the semantics of SAMPLE_VALUE depends up on the concrete class
+  protected static final int SAMPLE_VALUE = 4;
   protected static final int ENTRY_SIZE = 8;
 
+  /**
+   * Constructor passes argument to super class
+   * @param type the atom type
+   */
   protected TimeToSampleAtom(byte[] type) {
     super(type);
   }
   
+  /**
+   * Copy constructor.  Performs a deep copy.
+   * @param old the atom to copy.
+   */
   protected TimeToSampleAtom(TimeToSampleAtom old) {
     super(old);
   }
@@ -68,43 +77,33 @@ public abstract class TimeToSampleAtom extends LeafAtom {
   }
   
   /**
-   * Return the sample duration at the specified index
-   * @param index the index into the stts table
-   * @return the sample duration
+   * Return the sample value at the specified index.  The meaning of the
+   * sample value depends upon the concrete class.  For stts, it is a duration
+   * value.  For ctts, it is an offset.
+   * @param index the index into the time to sample table
+   * @return the sample value
    */
-  public final long getSampleDuration(int index) {
-    return data.getUnsignedInt(TABLE_OFFSET + (index * ENTRY_SIZE) + SAMPLE_DURATION);
+  protected final long getSampleValue(int index) {
+    return data.getUnsignedInt(TABLE_OFFSET + (index * ENTRY_SIZE) + SAMPLE_VALUE);
   }
+  
   /**
-   * Set the sample duration for the specified entry
+   * Set the sample value for the specified entry. The meaning of the
+   * sample value depends upon the concrete class.  For stts, it is a duration
+   * value.  For ctts, it is an offset.
    * @param index the table index
-   * @param duration the duration value for the specified entry
+   * @param value the value value for the specified entry
    */
-  public final void setSampleDuration(int index, long duration) {
-    data.addUnsignedInt(TABLE_OFFSET + (index * ENTRY_SIZE) + SAMPLE_DURATION, duration);
+  protected final void setSampleValue(int index, long value) {
+    data.addUnsignedInt(TABLE_OFFSET + (index * ENTRY_SIZE) + SAMPLE_VALUE, value);
   }
   
   /**
-   * Given a time in the media return the data sample.
-   * @param time the media time value
-   * @return the sample number for the specified time
+   * Cut the atom at the specified sample number.  This method is
+   * used by the subclass methods, stts or ctts.  
+   * @param sampleNum the sample number
+   * @param cutAtom the stts or ctts atom
    */
-  public long timeToSample(long time) {
-    long entries = getNumEntries();
-    long lowerBoundTime = 0;
-    long lowerBoundSample = 1;
-    for (int i = 0; i < entries; i++) {
-      long count = getSampleCount(i);
-      long duration = getSampleDuration(i);
-      if ((time - lowerBoundTime) < (count * duration)) {
-        return ((time - lowerBoundTime) / duration) + lowerBoundSample;
-      }
-      lowerBoundTime += count * duration;
-      lowerBoundSample += count;
-    }
-    return 0;    
-  }
-  
   protected void cut(long sampleNum, TimeToSampleAtom cutAtom) {
     // search the table for the specified sample 
     long numEntries = getNumEntries();
@@ -128,12 +127,12 @@ public abstract class TimeToSampleAtom extends LeafAtom {
     // add the new first entry 
     int entryNumber = 0;
     cutAtom.setSampleCount(entryNumber, newCount);
-    cutAtom.setSampleDuration(entryNumber, getSampleDuration(i));
+    cutAtom.setSampleValue(entryNumber, getSampleValue(i));
     entryNumber++;
     // copy the rest of the entries from the old table to the new table
     for (i++; i < numEntries; i++, entryNumber++) {
       cutAtom.setSampleCount(entryNumber, getSampleCount(i));
-      cutAtom.setSampleDuration(entryNumber, getSampleDuration(i));
+      cutAtom.setSampleValue(entryNumber, getSampleValue(i));
     }    
   }
 
@@ -148,7 +147,7 @@ public abstract class TimeToSampleAtom extends LeafAtom {
   public long computeDuration() {
     long duration = 0;
     for (long i = 0; i < getNumEntries(); i++) {
-      duration += (getSampleCount((int)i) * getSampleDuration((int)i));
+      duration += (getSampleCount((int)i) * getSampleValue((int)i));
     }
     return duration;
   }
