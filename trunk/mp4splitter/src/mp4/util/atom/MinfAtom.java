@@ -149,7 +149,7 @@ public class MinfAtom extends ContainerAtom {
 
   /**
    * Cut the atom at the specified time.
-   * @param time the time
+   * @param time the media/track normalized time
    * @return a new minf atom
    */
   public MinfAtom cut(long time) {

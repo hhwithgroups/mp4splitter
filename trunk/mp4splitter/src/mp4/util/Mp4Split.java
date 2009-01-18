@@ -34,7 +34,7 @@ public class Mp4Split extends DefaultAtomVisitor {
   public static String inputFile;
   public static String outputFile;
   public static boolean mdat = true;
-  public static long time;
+  public static float time;
   
   @Override
   protected void defaultAction(Atom atom) throws AtomException {
@@ -179,7 +179,7 @@ public class Mp4Split extends DefaultAtomVisitor {
         outputFile = args[++i];
       }
       else if (arg.equals("-time")) {
-        time = Long.valueOf(args[++i]);
+        time = Float.valueOf(args[++i]);
       }
       else if (arg.equals("-no_mdat")) {
         mdat = false;

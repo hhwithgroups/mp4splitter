@@ -44,6 +44,10 @@ public class StssAtom extends LeafAtom {
     return data.getUnsignedInt(ENTRIES_OFFSET);
   }
   
+  /**
+   * Set the number of entries in the sync sample table.
+   * @param numEntries the number of entries
+   */
   public void setNumEntries(long numEntries) {
     data.addUnsignedInt(ENTRIES_OFFSET, numEntries);
   }

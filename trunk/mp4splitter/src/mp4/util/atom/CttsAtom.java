@@ -28,6 +28,24 @@ public class CttsAtom extends TimeToSampleAtom {
   }
   
   /**
+   * Return the sample offset for the specified table index
+   * @param index the ctts table index
+   * @return the sample offset
+   */
+  public long getSampleOffset(int index) {
+    return getSampleValue(index);
+  }
+  
+  /**
+   * SEt the sample offset of the specified table index
+   * @param index the ctts table index entry
+   * @param offset the new sample offset
+   */
+  public void setSampleOffset(int index, long offset) {
+    setSampleValue(index, offset);
+  }
+  
+  /**
    * Cut the atom at the specified sample.  This method creates a new
    * ctts with the new data.  This method search through the table
    * looking for the appropriate sample.  Once found, a new table entry

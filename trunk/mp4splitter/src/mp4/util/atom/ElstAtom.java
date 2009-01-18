@@ -30,6 +30,32 @@ public class ElstAtom extends LeafAtom {
   public ElstAtom(ElstAtom old) {
     super(old);
   }
+  
+  /**
+   * Construct a single edit list entry.
+   * @param duration the duration of the edit
+   * @param mediaTime the media time entry for the edit
+   * @param mediaRate the media rate for the edit
+   */
+  public ElstAtom(long duration, long mediaTime, long mediaRate) {
+    this();
+    allocateData(1);
+    setNumEntries(1);
+    setDuration(0, duration);
+    setMediaTime(0, mediaTime);
+    setMediaRate(0, 1);
+  }
+  
+  /**
+   * Allocate space for the specified number of entries
+   * @param numEntries the number of entries in the edit list
+   */
+  @Override
+  public void allocateData(long numEntries) {
+    long size = TABLE_OFFSET + (numEntries * ENTRY_SIZE);
+    super.allocateData(size);
+  }
+
   /**
    * Set a new duration for each elst entry.
    * @param duration the new duration value
@@ -46,6 +72,14 @@ public class ElstAtom extends LeafAtom {
    */
   public long getNumEntries() {
     return data.getUnsignedInt(ENTRIES_OFFSET);
+  }
+  
+  /**
+   * Set the number of entries in the edit list
+   * @param numEntries the number of edit list entries
+   */
+  public void setNumEntries(long numEntries) {
+    data.addUnsignedInt(ENTRIES_OFFSET, numEntries);
   }
   
   /**
@@ -76,6 +110,15 @@ public class ElstAtom extends LeafAtom {
   }
   
   /**
+   * Set the media time for the specified index
+   * @param index the elst table index
+   * @param time the new time
+   */
+  public void setMediaTime(int index, long time) {
+    data.addUnsignedInt(TABLE_OFFSET + (index * ENTRY_SIZE) + MEDIA_TIME, time);
+  }
+  
+  /**
    * Return the media rate for the specified index.  The media rate is a 
    * fixed point value.  The first 16-bits is the integer and the next 16-bits
    * is the fraction.
@@ -84,6 +127,15 @@ public class ElstAtom extends LeafAtom {
    */
   public double getMediaRate(int index) {
     return data.getFixedPoint(TABLE_OFFSET + (index * ENTRY_SIZE) + MEDIA_RATE);
+  }
+  
+  /**
+   * Sets the integer portion of the media rate for the specified edit list entry.
+   * @param index the table index value
+   * @param rate the media rate integer portion
+   */
+  public void setMediaRate(int index, int rate) {
+    data.addFixedPoint(TABLE_OFFSET + (index * ENTRY_SIZE) + MEDIA_RATE, rate, 0);
   }
   
   @Override
@@ -98,9 +150,9 @@ public class ElstAtom extends LeafAtom {
    * @param movieTS the movie time scale
    * @return the updated time in the media time scale
    */
-  public long editTime(long time, long mediaTS, long movieTS) {
-    long movieTime = time * movieTS;
-    long mediaTime = time * mediaTS;
+  public long editTime(float time, long mediaTS, long movieTS) {
+    long movieTime = (long)(time * movieTS);
+    long mediaTime = (long)(time * mediaTS);
     for (int i = 0; i < getNumEntries(); i++) {
       if (movieTime < getDuration(i) && getMediaTime(i) != -1) {
         // we don't handle dwell edits

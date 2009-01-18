@@ -32,11 +32,29 @@ public class EdtsAtom extends ContainerAtom {
   }
   
   /**
+   * Create an edit list container with the specified edit list
+   * @param editList the edit list to add to the container
+   */
+  public EdtsAtom(ElstAtom editList) {
+    this();
+    this.elst = editList;
+    recomputeSize();
+  }
+  
+  /**
    * Return the edit list atom.  Null if there isn't an edit list
    * @return  the edit list atom.
    */
   public ElstAtom getElst() { 
     return elst; 
+  }
+  
+  /**
+   * Set the edit list atom for the edit list container
+   * @param elst the edist list atom
+   */
+  public void setElst(ElstAtom elst) {
+    this.elst = elst;
   }
 
   /**
@@ -97,9 +115,9 @@ public class EdtsAtom extends ContainerAtom {
    * @param movieTS the movie time scale
    * @return the updated time in the media time scale
    */
-  public long editTime(long time, long mediaTS, long movieTS) {
+  public long editTime(float time, long mediaTS, long movieTS) {
     if (elst == null) {
-      return time * mediaTS;
+      return (long)(time * mediaTS);
     }
     return elst.editTime(time, mediaTS, movieTS);
   }

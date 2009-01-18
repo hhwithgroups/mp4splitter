@@ -106,7 +106,7 @@ public class Mp4Dump extends DefaultAtomVisitor {
     level = level + 1;
     for (int i = 0; i < atom.getNumEntries() && i < maxEntries; i++) {
       indent();
-      out.println(atom.getSampleCount(i) + " " + atom.getSampleDuration(i));
+      out.println(atom.getSampleCount(i) + " " + atom.getSampleOffset(i));
     }
     level = level - 1;
   }
