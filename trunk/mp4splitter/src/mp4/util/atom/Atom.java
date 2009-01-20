@@ -3,9 +3,15 @@ package mp4.util.atom;
 import java.io.DataOutput;
 import java.io.IOException;
 
-
 /**
- * This class represents an atom in the mpeg-4 file 
+ * This class represents an atom in the mpeg-4 file.  See the mpeg-4 file
+ * documentation:
+ * <ul>
+ *   <li><a href="http://standards.iso.org/ittf/PubliclyAvailableStandards/index.html">ISO Standard 14496-12:2005</a>
+ *   <li><a href="developer.apple.com/DOCUMENTATION/QuickTime/QTFF/qtff.pdf ">QuickTime File Format Specification</a>
+ * </ul>
+ * 
+ * In the ISO spec, an Atom is a Box.  We use the QuickTime name, Atom.
  */
 public abstract class Atom {
   // the size of the atom, an unsigned int so we use a long
