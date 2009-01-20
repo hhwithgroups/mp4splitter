@@ -13,6 +13,14 @@ public class DefaultAtomVisitor extends AtomVisitor {
     defaultAction(atom);
   }
   @Override
+  public void visit(ChapAtom atom) throws AtomException {
+    defaultAction(atom);
+  }  
+  @Override
+  public void visit(CdscAtom atom) throws AtomException {
+    defaultAction(atom);
+  }
+  @Override
   public void visit(Co64Atom atom) throws AtomException {
     defaultAction(atom);
   }
@@ -38,6 +46,10 @@ public class DefaultAtomVisitor extends AtomVisitor {
   }
   @Override
   public void visit(GmhdAtom atom) throws AtomException {
+    defaultAction(atom);
+  }
+  @Override
+  public void visit(HintAtom atom) throws AtomException {
     defaultAction(atom);
   }
   @Override
@@ -107,6 +119,10 @@ public class DefaultAtomVisitor extends AtomVisitor {
   @Override
   public void visit(TkhdAtom atom) throws AtomException {
     defaultAction(atom);
+  }
+  @Override
+  public void visit(TrefAtom atom) throws AtomException {
+    defaultAction(atom); 
   }
   @Override
   public void visit(UdtaAtom atom) throws AtomException {

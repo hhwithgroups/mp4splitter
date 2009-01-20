@@ -10,10 +10,8 @@ import java.io.IOException;
  * The media information container atom.
  */
 public class MinfAtom extends ContainerAtom {
-  // video media header atom (if video)
-  private VmhdAtom vmhd;
-  // sound media header atom (if sound)
-  private SmhdAtom smhd;
+  // the video/sounds/base media information header
+  private IMhdAtom mhd;
   // the data information atom
   private DinfAtom dinf;
   // the sample table atom
@@ -32,48 +30,27 @@ public class MinfAtom extends ContainerAtom {
    */
   public MinfAtom(MinfAtom old) {
     super(old);
-    if (old.vmhd != null) {
-      vmhd = new VmhdAtom(old.vmhd);
-    }
-    if (old.smhd != null) {
-      smhd = new SmhdAtom(old.smhd);
-    }
+    mhd = old.mhd.copy();
     dinf = new DinfAtom(old.dinf);
     stbl = new StblAtom(old.stbl);
   }
   
   /**
-   * Return the video media header, if there is one
-   * @return the video media header
+   * Return the media header.
+   * @return the media header
    */
-  public VmhdAtom getVmhd() {
-    return vmhd;
+  public IMhdAtom getMhd() {
+    return mhd;
   }
   
   /**
-   * Set the video media header.
-   * @param vmhd the new video media header
+   * Set the media header.
+   * @param mhd the new media header
    */
-  public void setVmhd(VmhdAtom vmhd) {
-    this.vmhd = vmhd;
+  public void setMhd(IMhdAtom mhd) {
+    this.mhd = mhd;
   }
-  
-  /**
-   * Return the sound media header.
-   * @return the sound media header.
-   */
-  public SmhdAtom getSmhd() {
-    return smhd;
-  }
-  
-  /**
-   * Set the sound media header.
-   * @param smhd the new sound media header
-   */
-  public void setSmhd(SmhdAtom smhd) {
-    this.smhd = smhd;
-  }
-  
+    
   /**
    * Return the data information atom
    * @return the data information atom
@@ -113,11 +90,9 @@ public class MinfAtom extends ContainerAtom {
    */
   @Override
   public void addChild(Atom child) {
-    if (child instanceof VmhdAtom) {
-      vmhd = (VmhdAtom) child;
-    }
-    else if (child instanceof SmhdAtom) {
-      smhd = (SmhdAtom) child;
+    if (child instanceof VmhdAtom || child instanceof SmhdAtom ||
+        child instanceof GmhdAtom) {
+      mhd = (IMhdAtom) child;
     }
     else if (child instanceof DinfAtom) {
       dinf = (DinfAtom) child;
@@ -136,15 +111,8 @@ public class MinfAtom extends ContainerAtom {
    */
   @Override
   protected void recomputeSize() {
-    long newSize = dinf.size() + stbl.size();
-    if (vmhd != null) {
-      newSize += vmhd.size();
-    }
-    if (smhd != null) {
-      newSize += smhd.size();
-    }
+    long newSize = mhd.size() + dinf.size() + stbl.size();
     setSize(ATOM_HEADER_SIZE + newSize);
-    
   }
 
   /**
@@ -154,12 +122,7 @@ public class MinfAtom extends ContainerAtom {
    */
   public MinfAtom cut(long time) {
     MinfAtom cutMinf = new MinfAtom();
-    if (vmhd != null) {
-      cutMinf.setVmhd(vmhd.cut());
-    }
-    if (smhd != null) {
-      cutMinf.setSmhd(smhd.cut());
-    }
+    cutMinf.setMhd(mhd.cut());
     cutMinf.setDinf(dinf.cut());
     cutMinf.setStbl(stbl.cut(time));
     cutMinf.recomputeSize();
@@ -179,12 +142,7 @@ public class MinfAtom extends ContainerAtom {
   @Override
   public void writeData(DataOutput out) throws IOException {
     writeHeader(out);
-    if (vmhd != null) {
-      vmhd.writeData(out);
-    }
-    if (smhd != null) {
-      smhd.writeData(out);
-    }
+    mhd.writeData(out);
     dinf.writeData(out);
     stbl.writeData(out);
   }

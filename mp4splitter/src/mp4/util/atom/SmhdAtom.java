@@ -6,7 +6,7 @@ package mp4.util.atom;
 /**
  * The sound media information header atom.
  */
-public class SmhdAtom extends LeafAtom {
+public class SmhdAtom extends LeafAtom implements IMhdAtom {
   
   public SmhdAtom() {
     super(new byte[]{'s','m','h','d'});
@@ -19,7 +19,16 @@ public class SmhdAtom extends LeafAtom {
   public SmhdAtom(SmhdAtom old) {
     super(old);
   }
-  
+
+  /**
+   * Create a copy of the sound media information header.
+   * @return a copy of the sound media information header.
+   */
+  @Override
+  public IMhdAtom copy() {
+    return new SmhdAtom(this);
+  }
+
   /**
    * Cutting this method does not do anything to the contents, so
    * just return a new copy.

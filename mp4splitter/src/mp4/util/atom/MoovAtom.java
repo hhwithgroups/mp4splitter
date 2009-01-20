@@ -199,7 +199,7 @@ public class MoovAtom extends ContainerAtom {
       }
     }
     // check if any edits need to be added 
-    for (Iterator<TrakAtom> i = cutMoov.getTracks(); i.hasNext(); ) { 
+/*    for (Iterator<TrakAtom> i = cutMoov.getTracks(); i.hasNext(); ) { 
       TrakAtom trak = i.next();
       long trakDuration = trak.convertDuration(movieTimeScale);
       System.out.println("DBG: trak duration " + trakDuration);
@@ -211,7 +211,7 @@ public class MoovAtom extends ContainerAtom {
         trak.recomputeSize();
       }
     }
-    cutMoov.recomputeSize();
+*/    cutMoov.recomputeSize();
     return cutMoov;
   }
   

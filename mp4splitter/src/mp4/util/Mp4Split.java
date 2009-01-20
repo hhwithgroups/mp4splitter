@@ -119,6 +119,7 @@ public class Mp4Split extends DefaultAtomVisitor {
       System.out.println("DBG: file size " + new File(fn).length());
     } catch (FileNotFoundException e) {
       System.err.println("File not found " + fn);
+      System.exit(-1);
     }
   }
     

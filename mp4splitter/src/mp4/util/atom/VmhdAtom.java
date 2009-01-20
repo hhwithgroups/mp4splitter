@@ -6,7 +6,7 @@ package mp4.util.atom;
 /**
  * The video media information header atom.
  */
-public class VmhdAtom extends LeafAtom {
+public class VmhdAtom extends LeafAtom implements IMhdAtom {
   
   /**
    * Constructor for the video media information atom
@@ -21,6 +21,15 @@ public class VmhdAtom extends LeafAtom {
    */
   public VmhdAtom(VmhdAtom old) {
     super(old);
+  }
+  
+  /**
+   * Create a deep copy of the video information header.
+   * @return a copy of the video information header.
+   */
+  @Override
+  public IMhdAtom copy() {
+    return new VmhdAtom(this);
   }
   
   /**

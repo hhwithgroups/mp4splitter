@@ -13,6 +13,8 @@ import java.io.IOException;
 public class TrakAtom extends ContainerAtom {
   // the track header
   private TkhdAtom tkhd;
+  // the track reference container
+  private TrefAtom tref;
   // the media information
   private MdiaAtom mdia;
   // the edit list container
@@ -34,6 +36,9 @@ public class TrakAtom extends ContainerAtom {
   public TrakAtom(TrakAtom old) {
     super(old);
     tkhd = new TkhdAtom(old.tkhd);
+    if (old.tref != null) {
+      tref = new TrefAtom(old.tref);
+    }
     mdia = new MdiaAtom(old.mdia);
     if (old.edts != null) {
       edts = new EdtsAtom(old.edts);
@@ -57,6 +62,22 @@ public class TrakAtom extends ContainerAtom {
    */
   public void setTkhd(TkhdAtom tkhd) {
     this.tkhd = tkhd;
+  }
+  
+  /**
+   * Return the track reference atom, or null if there isn't one.
+   * @return the track reference atom
+   */
+  public TrefAtom getTref() {
+    return tref;
+  }
+  
+  /**
+   * Set the track reference atom
+   * @param tref the new track reference atom
+   */
+  public void setTref(TrefAtom tref) {
+    this.tref = tref;
   }
 
   /**
@@ -117,6 +138,9 @@ public class TrakAtom extends ContainerAtom {
     if (child instanceof TkhdAtom) {
       tkhd = (TkhdAtom) child;
     }
+    else if (child instanceof TrefAtom) {
+      tref = (TrefAtom) child;
+    }
     else if (child instanceof MdiaAtom) {
       mdia = (MdiaAtom) child;
     }
@@ -138,6 +162,9 @@ public class TrakAtom extends ContainerAtom {
   @Override
   protected void recomputeSize() {
     long newSize = tkhd.size() + mdia.size();
+    if (tref != null) {
+      newSize += tref.size();
+    }
     if (edts != null) {
       newSize += edts.size();
     }
@@ -166,10 +193,13 @@ public class TrakAtom extends ContainerAtom {
     cutTrak.setTkhd(tkhd.cut());
     cutTrak.setMdia(mdia.cut(mediaTime));
     if (edts != null) {
-      cutTrak.setEdts(null);
+      cutTrak.setEdts(edts.cut());
     }
     if (udta != null) {
       cutTrak.setUdta(udta.cut());
+    }
+    if (tref != null) {
+      cutTrak.setTref(tref.cut());
     }
     cutTrak.recomputeSize();
     return cutTrak;
@@ -195,6 +225,9 @@ public class TrakAtom extends ContainerAtom {
     }
     if (udta != null) {
       udta.writeData(out);
+    }
+    if (tref != null) {
+      tref.writeData(out);
     }
   }
   
