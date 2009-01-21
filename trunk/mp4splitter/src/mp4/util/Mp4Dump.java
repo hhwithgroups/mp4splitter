@@ -32,6 +32,8 @@ public class Mp4Dump extends DefaultAtomVisitor {
   private PrintStream out;
   // the current indentation level
   private int level;
+  // the last media handler processed, need since the stsd requires context
+  private HdlrAtom mediaHandler;
   
   private static String outputFile = null;
   private static String inputFile = null; 
@@ -43,8 +45,9 @@ public class Mp4Dump extends DefaultAtomVisitor {
    * @param outputfn where the output goes, System.out by default
    */
   public Mp4Dump(String inputfn, String outputfn) {
-    level = 0;
+    this.level = 0;
     this.out = System.out;
+    this.mediaHandler = null;
     try {
       mp4file = new DataInputStream(new FileInputStream(inputfn));
       if (outputfn != null) {
@@ -53,6 +56,7 @@ public class Mp4Dump extends DefaultAtomVisitor {
     } catch (FileNotFoundException e) {
       System.err.println("File not found " + inputfn);
       e.printStackTrace();
+      System.exit(-1);
     }
   }
   
@@ -77,6 +81,15 @@ public class Mp4Dump extends DefaultAtomVisitor {
   }
 
   
+  /**
+   * The default action for an atom, which covers both leaf and 
+   * container atoms.  For leaf atoms, only the name is printed.
+   * Otherwise, the visit method for the atom needs to be implemented.
+   * For a container atom, the method increments the indent level
+   * and processes the atoms in the container.
+   * @param atom the atom to process
+   * @throws AtomException is there is an IOException
+   */
   @Override
   protected void defaultAction(Atom atom) throws AtomException {
     indent();
@@ -133,7 +146,8 @@ public class Mp4Dump extends DefaultAtomVisitor {
   @Override
   public void visit(HdlrAtom atom) throws AtomException {
     printLeafHeader(atom);
-    out.println(" " + atom.getComponentSubtype());
+    mediaHandler = atom;
+    out.println(" " + atom.getHandlerType());
   }
 
   @Override
@@ -183,7 +197,16 @@ public class Mp4Dump extends DefaultAtomVisitor {
   @Override
   public void visit(StsdAtom atom) throws AtomException {
     printLeafHeader(atom);
-    out.println(" entries " + atom.getNumEntries());
+    out.print(" entries " + atom.getNumEntries());
+    for (int i = 0 ; i < atom.getNumEntries(); i++) {
+      if (mediaHandler.isVideo()) {
+        out.print(" " + atom.getWidth() + "x" + atom.getHeight());
+      }
+      else if (mediaHandler.isSound()) {
+      
+      }
+      out.println();
+    }
  }
 
   @Override

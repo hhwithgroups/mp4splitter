@@ -161,6 +161,17 @@ public class ByteStream {
   }
   
   /**
+   * Java doesn't have unsigned types, so we need to use the next
+   * larger signed type.
+   * @param b the byte array
+   * @param off offset to start the conversion
+   * @return the unsigned integer value of the byte array
+   */
+  public final int getUnsignedShort(int off) {
+    return ((data[off] & 0xff) << 8) | (data[off+1] & 0xff);  
+  }
+  
+  /**
    * Get a fixed point value from two 16 bit values located in a
    * 32-bit word.
    * @param off the offset in the byte array where value is located
