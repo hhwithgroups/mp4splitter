@@ -279,7 +279,8 @@ public class TrakAtom extends ContainerAtom {
    * @param editTime the media time of the edit
    */
   public void addEdit(long editTime) {
-    ElstAtom elst = new ElstAtom(tkhd.getDuration(), editTime, 1);
+    ElstAtom elst = new ElstAtom(1);
+    elst.addEntry(1, tkhd.getDuration(), editTime, 1);
     setEdts(new EdtsAtom(elst));
   }
   

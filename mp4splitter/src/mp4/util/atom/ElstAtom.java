@@ -33,17 +33,25 @@ public class ElstAtom extends LeafAtom {
   
   /**
    * Construct a single edit list entry.
-   * @param duration the duration of the edit
-   * @param mediaTime the media time entry for the edit
-   * @param mediaRate the media rate for the edit
+   * @param size the number of entries to allocate
    */
-  public ElstAtom(long duration, long mediaTime, long mediaRate) {
+  public ElstAtom(int size) {
     this();
-    allocateData(1);
-    setNumEntries(1);
-    setDuration(0, duration);
-    setMediaTime(0, mediaTime);
-    setMediaRate(0, 1);
+    allocateData(size);
+  }
+  
+  /**
+   * Add an entry to the edit list.
+   * @param num the entry number
+   * @param duration the edit list duration
+   * @param mediaTime the edit time
+   * @param mediaRate the edit media rate
+   */
+  public void addEntry(int num, long duration, long mediaTime, int mediaRate) {
+    setNumEntries(num);
+    setDuration(num - 1, duration);
+    setMediaTime(num - 1, mediaTime);
+    setMediaRate(num - 1, mediaRate);
   }
   
   /**
