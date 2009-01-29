@@ -24,6 +24,9 @@ import mp4.util.atom.MoovAtom;
  * The mpeg4 file format is the 
  * <a href="http://developer.apple.com/DOCUMENTATION/QuickTime/QTFF/qtff.pdf">Quicktime format</a>
  * 
+ * The mpeg4 format is also ISO standard 14496-12.  That is, Part 12 of
+ * the ISO mpeg4 specificatio.
+ * 
  * Splitting the mpeg4 file requires rewritting the stbl atom container
  * with new data and cutting off the mdat section.
  */

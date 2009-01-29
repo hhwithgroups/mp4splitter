@@ -190,6 +190,7 @@ public class MoovAtom extends ContainerAtom {
       cutMoov.addTrack(cutTrak);
       // need to convert the media time-scale to the movie time-scale
       long cutDuration = cutTrak.convertDuration(movieTimeScale);
+      System.out.println("DBG: cutDuration " + cutDuration);
       cutTrak.fixupDuration(cutDuration);
       if (cutDuration > cutMoov.getMvhd().getDuration()) {
         cutMoov.getMvhd().setDuration(cutDuration);
@@ -197,6 +198,8 @@ public class MoovAtom extends ContainerAtom {
       if (cutDuration < minDuration) {
         minDuration = cutDuration;
       }
+      time = cutDuration / movieTimeScale;
+      System.out.println("DBG: new time " + time);
     }
     // check if any edits need to be added 
 /*    for (Iterator<TrakAtom> i = cutMoov.getTracks(); i.hasNext(); ) { 
