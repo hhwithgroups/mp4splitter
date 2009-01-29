@@ -186,10 +186,10 @@ public class TrakAtom extends ContainerAtom {
     long mediaTimeScale = mdia.getMdhd().getTimeScale();
     long mediaTime = (long)(time * mediaTimeScale);
     System.out.println("DBG: media time " + mediaTime);
-    if (edts != null) {
-      mediaTime = edts.editTime(time, mediaTimeScale, movieTimeScale);
-      System.out.println("DBG: media time after edit " + mediaTime);
-    }
+//    if (edts != null) {
+//      mediaTime = edts.editTime(time, mediaTimeScale, movieTimeScale);
+//      System.out.println("DBG: media time after edit " + mediaTime);
+//    }
     cutTrak.setTkhd(tkhd.cut());
     cutTrak.setMdia(mdia.cut(mediaTime));
     if (edts != null) {

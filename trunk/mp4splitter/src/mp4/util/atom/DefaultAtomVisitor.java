@@ -9,6 +9,10 @@ public class DefaultAtomVisitor extends AtomVisitor {
     defaultAction(atom);
   }
   @Override
+  public void visit(FreeAtom atom) throws AtomException {
+    defaultAction(atom);
+  }
+  @Override
   public void visit(MoovAtom atom) throws AtomException {
     defaultAction(atom);
   }

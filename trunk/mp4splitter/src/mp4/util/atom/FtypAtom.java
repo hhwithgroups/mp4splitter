@@ -10,8 +10,19 @@ public class FtypAtom extends LeafAtom {
   
   public static final int MAJOR_BRAND_OFFSET = 8;
   
+  /**
+   * Construct an empty ftyp atom
+   */
   public FtypAtom() {
     super(new byte[]{'f','t','y','p'});
+  }
+  
+  /**
+   * Copy constructor. Performs a deep copy.
+   * @param old the version to copy
+   */
+  public FtypAtom(FtypAtom old) {
+    super(old);
   }
   
   @Override
@@ -19,6 +30,10 @@ public class FtypAtom extends LeafAtom {
     v.visit(this);
   }
   
+  /**
+   * Return the ISO registered brand name.
+   * @return the ISO registered brand name
+   */
   public byte[] getMajorBrand() {
     return data.getData(MAJOR_BRAND_OFFSET, MAJOR_BRAND_OFFSET + ATOM_WORD);
   }
