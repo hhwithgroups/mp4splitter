@@ -142,10 +142,10 @@ public abstract class Atom {
    * @return the unsigned integer value of the byte array
    */
   public static final long byteArrayToUnsignedInt(byte[] b, int off) {
-    return ((b[off] & 0xff) << 24) |
-    ((b[off+1] & 0xff) << 16) |
-    ((b[off+2] & 0xff) << 8) |
-    (b[off+3] & 0xff);  
+    return ((long)(b[off] & 0xff) << 24) |
+    ((long)(b[off+1] & 0xff) << 16) |
+    ((long)(b[off+2] & 0xff) << 8) |
+    (long)(b[off+3] & 0xff);  
   }
   
   /**

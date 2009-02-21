@@ -105,7 +105,13 @@ public class Mp4Dump extends DefaultAtomVisitor {
     }
     else {
       try {
-        mp4file.skipBytes((int) atom.dataSize());
+        // some more ugly code to deal with unsigned vs. signed problems
+        long dataSize = atom.dataSize();
+        while (dataSize > Integer.MAX_VALUE) {
+          mp4file.skipBytes(Integer.MAX_VALUE);
+          dataSize -= Integer.MAX_VALUE;
+        }
+        mp4file.skipBytes((int)dataSize);
       } catch (IOException e) {
         throw new AtomException("Unable to read mp4 file");
       }

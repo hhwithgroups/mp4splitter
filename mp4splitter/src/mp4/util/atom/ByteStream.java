@@ -154,10 +154,10 @@ public class ByteStream {
    * @return the unsigned integer value of the byte array
    */
   public final long getUnsignedInt(int off) {
-    return ((data[off] & 0xff) << 24) |
-    ((data[off+1] & 0xff) << 16) |
-    ((data[off+2] & 0xff) << 8) |
-    (data[off+3] & 0xff);  
+    return ((long)(data[off] & 0xff) << 24) |
+    ((long)(data[off+1] & 0xff) << 16) |
+    ((long)(data[off+2] & 0xff) << 8) |
+    (long)(data[off+3] & 0xff);  
   }
   
   /**
