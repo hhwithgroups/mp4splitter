@@ -198,7 +198,7 @@ public class MoovAtom extends ContainerAtom {
       if (cutDuration < minDuration) {
         minDuration = cutDuration;
       }
-      time = cutDuration / movieTimeScale;
+      time = (duration - cutDuration) / (float) movieTimeScale;
       System.out.println("DBG: new time " + time);
     }
     // check if any edits need to be added 
